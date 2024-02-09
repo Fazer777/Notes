@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="color_values">
+        <item name="color1">#EA5455</item>
+        <item  name="color2">#6639A6</item >
+        <item  name="color3">#fbd46d</item >
+        <item  name="color4">#ff8700</item >
+        <item  name="color5">#25a729</item >
+        <item  name="color6">#0275ac</item >
+        <item  name="color7">#00adb5</item >
+        <item  name="color8">#006a71</item >
+        <item  name="color9">#87b650</item >
+        <item  name="color10">#ffb4b4</item >
+    </string-array>
+</resources>
