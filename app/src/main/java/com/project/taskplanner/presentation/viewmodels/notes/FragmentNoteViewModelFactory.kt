@@ -3,7 +3,7 @@ package com.project.taskplanner.presentation.viewmodels.notes
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.project.data.database.NoteDaoImpl
+import com.project.data.database.dao.NoteDaoImpl
 import com.project.data.repository.NoteRepositoryImpl
 import com.project.domain.usecase.notes.AddNoteUseCase
 import com.project.domain.usecase.notes.DeleteNoteUseCase

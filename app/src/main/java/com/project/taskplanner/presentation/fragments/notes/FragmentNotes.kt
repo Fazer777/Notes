@@ -12,13 +12,13 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import android.widget.Toolbar
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -26,11 +26,11 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.project.domain.models.NoteInterim
 import com.project.taskplanner.R
 import com.project.taskplanner.databinding.FragmentNotesBinding
-import com.project.taskplanner.presentation.activities.AddNoteActivity
-import com.project.taskplanner.presentation.activities.CategoryActivity
-import com.project.taskplanner.presentation.activities.UpdateNoteActivity
-import com.project.taskplanner.presentation.adapters.RecyclerViewNoteAdapter
-import com.project.taskplanner.presentation.adapters.RecyclerViewNoteAdapter.MyOnItemClickListener
+import com.project.taskplanner.presentation.activities.note.AddNoteActivity
+import com.project.taskplanner.presentation.activities.category.CategoryActivity
+import com.project.taskplanner.presentation.activities.note.UpdateNoteActivity
+import com.project.taskplanner.presentation.adapters.note.RecyclerViewNoteAdapter
+import com.project.taskplanner.presentation.adapters.note.RecyclerViewNoteAdapter.MyOnItemClickListener
 import com.project.taskplanner.presentation.viewmodels.notes.FragmentNoteViewModelFactory
 import com.project.taskplanner.presentation.viewmodels.notes.FragmentNotesVM
 import java.io.Serializable
@@ -39,7 +39,7 @@ import java.io.Serializable
 class FragmentNotes : Fragment() {
 
     private lateinit var binding: FragmentNotesBinding;
-    private lateinit var viewModel : FragmentNotesVM
+    private val viewModel : FragmentNotesVM by viewModels {FragmentNoteViewModelFactory(requireContext())}
     private var adapter = RecyclerViewNoteAdapter()
 
     private val observer = Observer<ArrayList<NoteInterim>> {
@@ -85,10 +85,6 @@ class FragmentNotes : Fragment() {
             }
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
-
-        viewModel = ViewModelProvider(
-            requireActivity(), FragmentNoteViewModelFactory(requireContext()))
-            .get(FragmentNotesVM::class.java)
 
         createNote = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()) { result ->

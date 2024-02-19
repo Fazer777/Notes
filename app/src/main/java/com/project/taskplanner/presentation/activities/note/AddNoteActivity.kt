@@ -1,4 +1,4 @@
-package com.project.taskplanner.presentation.activities
+package com.project.taskplanner.presentation.activities.note
 
 import android.app.Activity
 import android.content.Intent
@@ -7,7 +7,6 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.ViewModelProvider
@@ -15,7 +14,7 @@ import com.project.domain.models.CategoryInterim
 import com.project.domain.models.NoteInterim
 import com.project.taskplanner.R
 import com.project.taskplanner.databinding.AddNoteActivityBinding
-import com.project.taskplanner.presentation.adapters.CategorySpinnerAdapter
+import com.project.taskplanner.presentation.adapters.category.CategorySpinnerAdapter
 import com.project.taskplanner.presentation.viewmodels.notes.AddNoteViewModelFactory
 import com.project.taskplanner.presentation.viewmodels.notes.AddNoteVM
 import java.time.LocalDateTime

@@ -3,7 +3,7 @@ package com.project.taskplanner.presentation.viewmodels.categories
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.project.data.database.CategoryDaoImpl
+import com.project.data.database.dao.CategoryDaoImpl
 import com.project.data.repository.CategoryRepositoryImpl
 import com.project.domain.usecase.categories.AddCategoryUseCase
 import com.project.domain.usecase.categories.DeleteCategoryUseCase

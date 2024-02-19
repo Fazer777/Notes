@@ -1,4 +1,4 @@
-package com.project.taskplanner.presentation.adapters
+package com.project.taskplanner.presentation.adapters.category
 
 import android.graphics.Color
 import android.view.LayoutInflater

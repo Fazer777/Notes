@@ -1,9 +1,12 @@
 <resources>
     <string name="app_name">TaskPlanner</string>
-    <!-- TODO: Remove or change this placeholder text -->
+
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="completed_task_string">Завершено %1$s</string>
 
     <!--Intent Keys-->
     <string name="INTENT_CREATE_NOTE">create_note</string>
     <string name="INTENT_UPDATE_NOTE">update_note</string>
+    <string name="INTENT_CREATE_TASK">create_task</string>
+    <string name="INTENT_UPDATE_TASK">update_task</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.project.taskplanner.presentation.adapters
+package com.project.taskplanner.presentation.adapters.category
 
 import android.view.LayoutInflater
 import android.view.View
@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.project.domain.models.CategoryInterim
 import com.project.taskplanner.R
 import com.project.taskplanner.databinding.ItemCategoryRecyclerviewBinding
-import java.util.Collections
 import java.util.stream.Collectors
 
 class RecyclerViewCategoryAdapter :

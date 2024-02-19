@@ -11,4 +11,5 @@
         android:layout_height="55dp"
         android:background="@drawable/color_blob"
         android:layout_margin="5dp" />
+
 </LinearLayout>

@@ -10,9 +10,9 @@ import android.view.ViewGroup
 import android.view.Window
 import android.widget.ArrayAdapter
 import android.widget.GridView
-import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import com.project.taskplanner.R
-import com.project.taskplanner.presentation.activities.CategoryActivity
+import com.project.taskplanner.presentation.activities.category.CategoryActivity
 
 
 class GridViewDialog(
@@ -23,6 +23,7 @@ class GridViewDialog(
     private lateinit var gridView :GridView
     private var mIndex : Int = 1
     private var gridViewAdapter = GridViewAdapter(mContext)
+    private var listener : OnItemClickListener? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,9 +39,13 @@ class GridViewDialog(
         gridView.adapter = gridViewAdapter
         gridView.setItemChecked(mIndex, true);
 
+
+
         gridView.setOnItemClickListener { parent, view, position, id ->
-            (mContext as CategoryActivity).setTextViewColor(colorList[position])
-            dismiss()
+//            (mContext as CategoryActivity).setTextViewColor(colorList[position])
+            if (position != RecyclerView.NO_POSITION){
+                listener?.onItemClick(view, position)
+            }
         }
 
     }
@@ -48,7 +53,6 @@ class GridViewDialog(
     inner class GridViewAdapter(
         context : Context
     ) : ArrayAdapter<String>(context, android.R.layout.simple_list_item_1){
-
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             var view = convertView
             if (view == null){
@@ -59,6 +63,18 @@ class GridViewDialog(
             tvColorBlob?.background?.setTint(Color.parseColor(getItem(position)))
             return view!!
         }
+    }
+
+    fun getItem(position: Int) : String{
+        return colorList[position]
+    }
+
+    interface OnItemClickListener{
+        fun onItemClick(view: View, position: Int)
+    }
+
+    fun setOnItemClickListener(listener: OnItemClickListener){
+        this.listener = listener
     }
 
 }

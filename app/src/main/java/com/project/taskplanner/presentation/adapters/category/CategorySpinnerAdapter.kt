@@ -1,7 +1,5 @@
-package com.project.taskplanner.presentation.adapters
+package com.project.taskplanner.presentation.adapters.category
 
-import android.content.Context
-import android.graphics.ColorFilter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup

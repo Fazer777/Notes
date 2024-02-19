@@ -31,8 +31,10 @@ android {
                 "src/main/res/layouts/activities",
                 "src/main/res/layouts/fragments",
                 "src/main/res/layouts/bottom_sheets",
+                "src/main/res/layouts/dialogs",
                 "src/main/res/layouts/items/items_notes_activity",
                 "src/main/res/layouts/items/items_category",
+                "src/main/res/layouts/items/items_tasks",
                 "src/main/res/layouts",
                 "src/main/res",
             )

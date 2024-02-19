@@ -1,10 +1,9 @@
-package com.project.data.database
+package com.project.data.database.dao
 
 import android.content.ContentValues
 import android.content.Context
-import android.database.Cursor
-import android.database.sqlite.SQLiteDatabase
-import com.project.data.database.dao.NoteDao
+import com.project.data.database.DbHelper
+import com.project.data.database.dao.dao_interface.INoteDao
 import com.project.data.database.tables.TableCategories
 import com.project.data.database.tables.TableNotes
 import com.project.data.models.Category
@@ -13,7 +12,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
-class NoteDaoImpl(val context : Context) : NoteDao {
+class NoteDaoImpl(val context : Context) : INoteDao {
 
     private val dbHelper = DbHelper(context)
 
@@ -96,7 +95,6 @@ class NoteDaoImpl(val context : Context) : NoteDao {
                             curs.getInt(curs.getColumnIndexOrThrow(TableCategories.COLOR)),
                             curs.getInt(curs.getColumnIndexOrThrow(TableCategories.ITEM_INDEX))
                         ),
-                        // TODO
                         noteDate = LocalDateTime.parse(
                             curs.getString(curs.getColumnIndexOrThrow(TableNotes.DATE_TIME)),
                             DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
@@ -140,7 +138,6 @@ class NoteDaoImpl(val context : Context) : NoteDao {
             }
         }
     }
-
 
     private fun getCategoryIdByName(nameCategory : String) : Int{
 

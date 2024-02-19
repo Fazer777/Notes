@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/id_cv_main_layout"
+    android:id="@+id/card_view_note_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="50dp"
@@ -47,7 +47,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/id_tv_text_note_preview"
-
+                android:layout_marginStart="5dp"
                 />
 
             <TextView

@@ -1,4 +1,4 @@
-package com.project.taskplanner.presentation.adapters
+package com.project.taskplanner.presentation.adapters.note
 
 import android.view.LayoutInflater
 import android.view.View

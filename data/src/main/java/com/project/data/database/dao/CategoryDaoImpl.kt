@@ -1,9 +1,9 @@
-package com.project.data.database
+package com.project.data.database.dao
 
 import android.content.ContentValues
 import android.content.Context
-import android.database.sqlite.SQLiteDatabase
-import com.project.data.database.dao.CategoryDao
+import com.project.data.database.DbHelper
+import com.project.data.database.dao.dao_interface.ICategoryDao
 import com.project.data.database.tables.TableCategories
 import com.project.data.database.tables.TableNotes
 import com.project.data.models.Category
@@ -12,7 +12,7 @@ import kotlin.Long
 import kotlin.arrayOf
 
 
-class CategoryDaoImpl(val context : Context) : CategoryDao {
+class CategoryDaoImpl(val context : Context) : ICategoryDao {
 
     private val dbHelper = DbHelper(context)
 

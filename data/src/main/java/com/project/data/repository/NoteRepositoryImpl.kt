@@ -1,6 +1,6 @@
 package com.project.data.repository
 
-import com.project.data.database.dao.NoteDao
+import com.project.data.database.dao.dao_interface.INoteDao
 import com.project.data.models.Category
 import com.project.data.models.Note
 import com.project.domain.models.CategoryInterim
@@ -8,7 +8,7 @@ import com.project.domain.models.NoteInterim
 import com.project.domain.repository.INoteRepository
 
 
-class NoteRepositoryImpl(val noteDao : NoteDao) : INoteRepository {
+class NoteRepositoryImpl(val noteDao : INoteDao) : INoteRepository {
 
     override fun addNote(noteInterim: NoteInterim) {
         noteDao.addNote(mapToNote(noteInterim))

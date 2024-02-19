@@ -20,8 +20,9 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".presentation.activities.AddNoteActivity"/>
-        <activity android:name=".presentation.activities.UpdateNoteActivity"/>
-        <activity android:name=".presentation.activities.CategoryActivity"/>
+        <activity android:name=".presentation.activities.note.AddNoteActivity"/>
+        <activity android:name=".presentation.activities.note.UpdateNoteActivity"/>
+        <activity android:name=".presentation.activities.category.CategoryActivity"/>
+        <activity android:name=".presentation.activities.task.AddTaskActivity"/>
     </application>
 </manifest>

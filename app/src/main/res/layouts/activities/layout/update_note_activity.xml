@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".presentation.activities.UpdateNoteActivity">
+    tools:context=".presentation.activities.note.UpdateNoteActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/id_upd_note_toolbar"

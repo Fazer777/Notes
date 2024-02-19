@@ -1,4 +1,4 @@
-package com.project.taskplanner.presentation.activities
+package com.project.taskplanner.presentation.activities.category
 
 import android.content.DialogInterface
 import android.content.Intent
@@ -18,8 +18,7 @@ import com.project.domain.models.CategoryInterim
 import com.project.taskplanner.R
 import com.project.taskplanner.databinding.BottomSheetCategoriesBinding
 import com.project.taskplanner.databinding.CategoryActivityBinding
-import com.project.taskplanner.presentation.adapters.ColorSpinnerAdapter
-import com.project.taskplanner.presentation.adapters.RecyclerViewCategoryAdapter
+import com.project.taskplanner.presentation.adapters.category.RecyclerViewCategoryAdapter
 import com.project.taskplanner.presentation.dialogs.GridViewDialog
 import com.project.taskplanner.presentation.viewmodels.categories.CategoryVM
 import com.project.taskplanner.presentation.viewmodels.categories.CategoryViewModelFactory
@@ -107,20 +106,29 @@ class CategoryActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            createCategory(dialog)
+            createCategory()
             dialog.dismiss()
         }
 
         textView?.setOnClickListener {
             val gridDialog = GridViewDialog(this@CategoryActivity, colorStringArray)
+            gridDialog.setOnItemClickListener(object : GridViewDialog.OnItemClickListener{
+                override fun onItemClick(view: View, position: Int) {
+                    val item : String = gridDialog.getItem(position)
+                    textView?.background?.setTint(Color.parseColor(item))
+                    selectedColor = item
+                    gridDialog.dismiss()
+                }
+
+            })
             gridDialog.show()
         }
 
-        dialog.setCancelable(false)
+        dialog.setCancelable(true)
         dialog.show()
     }
 
-    private fun createCategory(dialog: BottomSheetDialog) {
+    private fun createCategory() {
         val categoryInterim = CategoryInterim(
             bindingBottomSheet.idBotSheetEdittext.text.toString(),
             Color.parseColor(selectedColor),
@@ -166,11 +174,4 @@ class CategoryActivity : AppCompatActivity() {
             }
         })
     }
-
-    fun setTextViewColor(colorStr: String){
-        textView?.background?.setTint(Color.parseColor(colorStr))
-        selectedColor = colorStr
-    }
-
-
 }
