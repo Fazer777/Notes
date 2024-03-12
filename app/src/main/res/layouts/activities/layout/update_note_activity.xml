@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".presentation.activities.UpdateNoteActivity">
+    tools:context=".presentation.activities.note.UpdateNoteActivity"
+    android:background="@color/white">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/id_upd_note_toolbar"
@@ -15,7 +16,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toTopOf="@id/id_upd_note_spinner"
-        android:background="@color/teal_200"
+        android:background="@color/white"
         />
 
     <Spinner
@@ -40,7 +41,7 @@
         app:layout_constraintTop_toBottomOf="@id/id_upd_note_toolbar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/id_upd_note_spinner"
-        android:text="20.01.2024, 13:24"
+        android:hint="@string/date"
         android:textSize="15sp"
         android:gravity="center"
         android:textColor="@color/black"
@@ -52,7 +53,7 @@
         android:layout_height="0dp"
         android:background="@android:color/transparent"
         android:gravity="top"
-        android:hint="Добавить заметку..."
+        android:hint="@string/add_description"
         android:padding="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

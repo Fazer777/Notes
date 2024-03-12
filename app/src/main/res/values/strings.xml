@@ -1,9 +1,64 @@
 <resources>
     <string name="app_name">TaskPlanner</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <!--Intent Keys-->
     <string name="INTENT_CREATE_NOTE">create_note</string>
     <string name="INTENT_UPDATE_NOTE">update_note</string>
+    <string name="INTENT_CREATE_TASK">create_task</string>
+    <string name="INTENT_UPDATE_TASK">update_task</string>
+    <string name="INTENT_CATEGORY_CHANGED">update_task</string>
+
+    <!--String resources-->
+    <string name="completed_task_string_full">Завершено %1$s</string>
+    <string name="completed_task_string_short">Завер. %1$s</string>
+    <string name="list_no_data">Нет данных</string>
+    <string name="can_not_removed">Не может быть удалено</string>
+    <string name="name_category_is_empty">Отсутствует название категории</string>
+    <string name="category_already_exists">"Такая категория уже существует"</string>
+    <string name="category_deleted">Выбранная категория удалена</string>
+    <string name="note_deleted">Выбранная заметка удалена</string>
+    <string name="task_deleted">Выбранная задача удалена</string>
+    <string name="task_no_data_selected">Не выбрана дата выполнения задачи</string>
+
+
+    <!--Hints-->
+    <string name="title">Заголовок</string>
+    <string name="description">Описание</string>
+    <string name="name_category">Название категории</string>
+    <string name="choose_date">Выберите дату…</string>
+    <string name="add_description">Добавить описание…</string>
+
+    <!--Content Descriptions & MenuItem Titles-->
+    <string name="categories">Категории</string>
+    <string name="add_subtask">Добавить подзадачу</string>
+    <string name="add_new_note">Добавить заметку</string>
+    <string name="add_new_task">Добавить задачу</string>
+    <string name="add_new_category">Добавить категорию</string>
+    <string name="confirm_creation">Подтвердить создание</string>
+    <string name="grid_layout">Сетка</string>
+    <string name="linear_layout">Список</string>
+    <string name="add_record">Добавить</string>
+    <string name="edit_record">Изменить</string>
+    <string name="close">Закрыть</string>
+    <string name="delete">Удалить</string>
+    <string name="complete">Завершить</string>
+    <string name="begin">Приступить</string>
+    <string name="more_options">Больше опций</string>
+    <string name="date">Дата</string>
+    <string name="check_subtask">Отметить подзадачу</string>
+
+    <!--Bottom Nav Menu-->
+    <string name="notes">Заметки</string>
+    <string name="tasks">Задачи</string>
+
+    <!--ToolBar Titles-->
+    <string name="creation_note">Создание заметки</string>
+    <string name="edit_note">Изменение заметки</string>
+
+    <!--AlertDialog-->
+    <string name="positiveAnswer">Да</string>
+    <string name="negativeAnswer">Нет</string>
+    <string name="delete_selected_note">Удалить выбранную заметку?</string>
+    <string name="delete_selected_task">Удалить выбранную задачу?</string>
+    <string name="delete_selected_category">Удалить выбранную категорию?</string>
 </resources>

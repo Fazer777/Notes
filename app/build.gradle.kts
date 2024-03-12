@@ -22,6 +22,7 @@ android {
             listOf(
                 //menu
                 "src/main/res/myMenus/bottom_nav_bar",
+                "src/main/res/myMenus/pop_up_menu",
                 "src/main/res/myMenus/tool_bar",
                 // drawable
                 "src/main/res/myDrawable/icons",
@@ -31,8 +32,10 @@ android {
                 "src/main/res/layouts/activities",
                 "src/main/res/layouts/fragments",
                 "src/main/res/layouts/bottom_sheets",
+                "src/main/res/layouts/dialogs",
                 "src/main/res/layouts/items/items_notes_activity",
                 "src/main/res/layouts/items/items_category",
+                "src/main/res/layouts/items/items_tasks",
                 "src/main/res/layouts",
                 "src/main/res",
             )
@@ -72,19 +75,26 @@ dependencies {
     implementation(project(":data"))
 
     // ViewModel
-    val lifecycle_version ="2.7.0"
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
-    implementation ("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
-    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version")
+    val lifecycleVersion ="2.7.0"
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion")
+    implementation ("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion")
+    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion")
 
-    val nav_version = "2.7.6"
+    val navVersion = "2.7.6"
     // Navigation
-    implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
-    implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
+    implementation("androidx.navigation:navigation-fragment-ktx:$navVersion")
+    implementation("androidx.navigation:navigation-ui-ktx:$navVersion")
+
+    // Koin
+    val koinVersion = "3.5.0"
+    implementation("io.insert-koin:koin-android:$koinVersion")
+    runtimeOnly("io.insert-koin:koin-core:$koinVersion")
+
 
     // Jupiter
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.1")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.1")
+
     // Mockito
     //testImplementation("org.mockito:mockito-core:5.3.1")
     //testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")

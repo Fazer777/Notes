@@ -4,7 +4,7 @@ import com.project.domain.models.CategoryInterim
 import com.project.domain.repository.ICategoryRepository
 
 class GetCategoriesUseCase(private val categoryRepository: ICategoryRepository) {
-    fun execute() : List<CategoryInterim>{
+    suspend fun execute() : List<CategoryInterim>{
         return categoryRepository.getCategories()
     }
 }

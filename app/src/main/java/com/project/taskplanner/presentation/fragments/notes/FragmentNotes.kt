@@ -12,7 +12,6 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import android.widget.Toolbar
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
@@ -20,31 +19,28 @@ import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.project.domain.models.NoteInterim
 import com.project.taskplanner.R
 import com.project.taskplanner.databinding.FragmentNotesBinding
-import com.project.taskplanner.presentation.activities.AddNoteActivity
-import com.project.taskplanner.presentation.activities.CategoryActivity
-import com.project.taskplanner.presentation.activities.UpdateNoteActivity
-import com.project.taskplanner.presentation.adapters.RecyclerViewNoteAdapter
-import com.project.taskplanner.presentation.adapters.RecyclerViewNoteAdapter.MyOnItemClickListener
-import com.project.taskplanner.presentation.viewmodels.notes.FragmentNoteViewModelFactory
+import com.project.taskplanner.presentation.activities.note.AddNoteActivity
+import com.project.taskplanner.presentation.activities.category.CategoryActivity
+import com.project.taskplanner.presentation.activities.note.UpdateNoteActivity
+import com.project.taskplanner.presentation.adapters.note.RecyclerViewNoteAdapter
+import com.project.taskplanner.presentation.adapters.note.RecyclerViewNoteAdapter.MyOnItemClickListener
 import com.project.taskplanner.presentation.viewmodels.notes.FragmentNotesVM
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.Serializable
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class FragmentNotes : Fragment() {
 
     private lateinit var binding: FragmentNotesBinding;
-    private lateinit var viewModel : FragmentNotesVM
-    private var adapter = RecyclerViewNoteAdapter()
-
-    private val observer = Observer<ArrayList<NoteInterim>> {
-        adapter.noteList = it
-    }
+    private val viewModel by viewModel<FragmentNotesVM>()
+    private val adapter = RecyclerViewNoteAdapter()
 
     private var createNote : ActivityResultLauncher<Intent>? = null
     private var updateNote : ActivityResultLauncher<Intent>? = null
@@ -53,7 +49,7 @@ class FragmentNotes : Fragment() {
 
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding  = FragmentNotesBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -61,11 +57,26 @@ class FragmentNotes : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        createToolbar()
+        initActions()
+        initRecyclerView()
+        initButtons()
+
+        viewModel.notesLive.observe(viewLifecycleOwner){newList->
+            adapter.setAdapterList(newList = newList)
+            showImageEmpty()
+        }
+
+        CoroutineScope(Dispatchers.Main).launch {
+            viewModel.getNotes()
+        }
+    }
+
+    private fun createToolbar() {
         val menuHost : MenuHost = requireActivity()
 
         requireActivity().actionBar?.setDisplayShowTitleEnabled(false)
 
-        // So OnCreateOptionsMenu is deprecated
         menuHost.addMenuProvider(object : MenuProvider{
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.note_main_tool_bar, menu)
@@ -74,22 +85,15 @@ class FragmentNotes : Fragment() {
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 when(menuItem.itemId){
                     R.id.id_category_management -> {
-                        Toast.makeText(requireContext(), "OK", Toast.LENGTH_SHORT).show()
                         updateCategory?.launch(Intent(requireContext(), CategoryActivity::class.java))
-                    }
-                    else ->{
-                        Toast.makeText(requireContext(), "NOK", Toast.LENGTH_SHORT).show()
                     }
                 }
                 return true
             }
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+    }
 
-
-        viewModel = ViewModelProvider(
-            requireActivity(), FragmentNoteViewModelFactory(requireContext()))
-            .get(FragmentNotesVM::class.java)
-
+    private fun initActions(){
         createNote = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK){
@@ -99,11 +103,11 @@ class FragmentNotes : Fragment() {
                     NoteInterim::class.java
                 )
                 noteInterim.itemIndex = adapter.itemCount
-                viewModel.onAddNoteEvent(noteInterim)
-                adapter.addNote(noteInterim)
-            }
-            else{
-                Toast.makeText(context, "Adding note canceled", Toast.LENGTH_SHORT).show()
+                CoroutineScope(Dispatchers.Main).launch {
+                    viewModel.onAddNoteEvent(noteInterim)
+                    adapter.addNote(noteInterim)
+                    showImageEmpty()
+                }
             }
         }
 
@@ -111,38 +115,29 @@ class FragmentNotes : Fragment() {
             ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK){
                 val noteInterim = getSerializable(result.data!!, resources.getString(R.string.INTENT_UPDATE_NOTE), NoteInterim::class.java)
-                viewModel.onUpdateNoteEvent(noteInterim)
-                adapter.updateNote(notePosition, noteInterim)
+                CoroutineScope(Dispatchers.Main).launch {
+                    viewModel.onUpdateNoteEvent(noteInterim)
+                    adapter.updateNote(notePosition, noteInterim)
+                }
             }
-            else{
-                Toast.makeText(context, "Updating note canceled", Toast.LENGTH_SHORT).show()
-            }
-
         }
 
         updateCategory = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()){ result ->
             if (result.resultCode == Activity.RESULT_OK){
-                val changes = result.data?.getBooleanExtra("Changes", true)
+                val changes = result.data?.getBooleanExtra(resources.getString(R.string.INTENT_CATEGORY_CHANGED), true)
                 if (changes == true) {
-                    viewModel.getNotes()
-                    adapter.notifyDataSetChanged()
-                    Toast.makeText(context, "List updated", Toast.LENGTH_SHORT).show()
+                    CoroutineScope(Dispatchers.Main).launch{
+                        viewModel.getNotes()
+                    }
                 }
-
             }
         }
-
-        initRecyclerView()
-        initActions()
-
-        viewModel.notesLive.observe(viewLifecycleOwner, observer)
     }
 
-    private fun initActions() {
+    private fun initButtons() {
         binding.apply {
             idFloatBtnAddNote.setOnClickListener {
-                Toast.makeText(requireContext(), "btn add note clicked", Toast.LENGTH_SHORT).show()
                 createNote?.launch(Intent(context, AddNoteActivity::class.java))
             }
         }
@@ -155,40 +150,33 @@ class FragmentNotes : Fragment() {
 
             adapter.setOnItemClickListener(object : MyOnItemClickListener {
                 override fun onItemClick(itemView: View, position: Int) {
-                    Toast.makeText(
-                        requireContext(),
-                        "Update note launched",
-                        Toast.LENGTH_SHORT).show()
                     notePosition = position
                     val intent = Intent(requireContext(), UpdateNoteActivity::class.java)
-                    intent.putExtra(resources.getString(R.string.INTENT_UPDATE_NOTE), adapter.noteList[position])
+                    intent.putExtra(resources.getString(R.string.INTENT_UPDATE_NOTE), adapter.getItem(position))
                     updateNote?.launch(intent)
                 }
 
                 override fun onItemLongClick(itemView: View, position: Int) {
 
                     AlertDialog.Builder(requireActivity())
-                        .setTitle("Удалить выбранную заметку?")
-                        .setNegativeButton("Нет") { dialogInterface: DialogInterface?, i: Int ->
-
-                            Toast.makeText(
-                                requireContext(),
-                                "Удаление отменено",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                        .setTitle(resources.getString(R.string.delete_selected_note))
+                        .setNegativeButton(resources.getString(R.string.negativeAnswer)) { dialogInterface: DialogInterface?, i: Int ->
 
                             dialogInterface?.dismiss()
                         }
-                        .setPositiveButton("Да") { dialogInterface: DialogInterface, i: Int ->
+                        .setPositiveButton(resources.getString(R.string.positiveAnswer)) { dialogInterface: DialogInterface, i: Int ->
 
                             Toast.makeText(
                                 requireContext(),
-                                "Заметка удалена",
+                                resources.getString(R.string.note_deleted),
                                 Toast.LENGTH_SHORT
                             ).show()
 
-                            viewModel.onDeleteNoteEvent(adapter.noteList[position].itemIndex)
-                            adapter.deleteNote(position)
+                            CoroutineScope(Dispatchers.Main).launch {
+                                viewModel.onDeleteNoteEvent(adapter.getItem(position).itemIndex)
+                                adapter.deleteNote(position)
+                                showImageEmpty()
+                            }
                             dialogInterface.dismiss()
 
                         }.setCancelable(false).create().show()
@@ -204,8 +192,10 @@ class FragmentNotes : Fragment() {
             intent.getSerializableExtra(key) as T
     }
 
-    override fun onDestroy() {
-        viewModel.notesLive.removeObserver(observer)
-        super.onDestroy()
+    private fun showImageEmpty() =with(binding) {
+        val isEmpty = adapter.itemCount == 0
+        imgViewEmpty.visibility = if (isEmpty) View.VISIBLE else View.GONE
+        textViewEmptyText.visibility = if (isEmpty) View.VISIBLE else View.GONE
     }
+
 }
