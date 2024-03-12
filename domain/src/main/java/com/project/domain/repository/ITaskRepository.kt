@@ -2,13 +2,17 @@ package com.project.domain.repository
 
 import com.project.domain.dto.TaskDTO
 import com.project.domain.models.TaskInterim
+import java.time.LocalDate
 
 interface ITaskRepository {
-    fun addTask(taskInterim: TaskInterim) : TaskDTO
+    suspend fun addTask(taskInterim: TaskInterim) : Int
 
-    fun updateTask(taskId : Int, taskInterim: TaskInterim)
+    suspend fun updateTask(taskId : Int, newTask: TaskInterim)
 
-    fun deleteTask(taskId : Int)
+    suspend fun updateTaskChecked(taskId : Int, checked : Boolean, completionDate : LocalDate)
 
-    fun getTasks() : List<TaskInterim>
+    suspend fun deleteTask(taskId : Int)
+
+    suspend fun getTasks() : List<TaskInterim>
+
 }
