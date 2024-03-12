@@ -9,14 +9,13 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.lifecycle.ViewModelProvider
 import com.project.domain.models.CategoryInterim
 import com.project.domain.models.NoteInterim
 import com.project.taskplanner.R
 import com.project.taskplanner.databinding.AddNoteActivityBinding
 import com.project.taskplanner.presentation.adapters.category.CategorySpinnerAdapter
-import com.project.taskplanner.presentation.viewmodels.notes.AddNoteViewModelFactory
 import com.project.taskplanner.presentation.viewmodels.notes.AddNoteVM
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -25,7 +24,7 @@ import java.time.format.FormatStyle
 class AddNoteActivity : AppCompatActivity() {
 
     private lateinit var toolbar : Toolbar
-    private lateinit var viewModel : AddNoteVM
+    private val viewModel by viewModel<AddNoteVM>()
     private lateinit var binding: AddNoteActivityBinding
     private var categorySpinnerAdapter = CategorySpinnerAdapter()
 
@@ -40,11 +39,6 @@ class AddNoteActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = "Создание"
-
-        viewModel = ViewModelProvider(
-            this@AddNoteActivity,
-            AddNoteViewModelFactory(this@AddNoteActivity)
-        ).get(AddNoteVM::class.java)
 
 
         viewModel.categoriesLive.observe(this@AddNoteActivity) {
