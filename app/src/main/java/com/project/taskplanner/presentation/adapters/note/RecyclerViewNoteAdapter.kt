@@ -13,7 +13,7 @@ import java.time.format.FormatStyle
 class RecyclerViewNoteAdapter() : RecyclerView.Adapter<RecyclerViewNoteAdapter.ViewHolder>() {
 
     private var listener: MyOnItemClickListener? = null
-    public var noteList = ArrayList<NoteInterim>()
+    private val noteList = ArrayList<NoteInterim>()
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
@@ -83,6 +83,16 @@ class RecyclerViewNoteAdapter() : RecyclerView.Adapter<RecyclerViewNoteAdapter.V
         noteList.parallelStream()
             .filter { it.itemIndex > itemIndex}
             .forEach { it -> it.itemIndex -=1 }
+    }
+
+    public fun setAdapterList(newList : List<NoteInterim>){
+        noteList.clear()
+        noteList.addAll(newList)
+        notifyDataSetChanged()
+    }
+
+    public fun getItem(position : Int) : NoteInterim{
+        return noteList[position]
     }
 
     interface MyOnItemClickListener{

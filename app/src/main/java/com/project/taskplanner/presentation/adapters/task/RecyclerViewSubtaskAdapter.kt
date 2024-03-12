@@ -14,7 +14,7 @@ import com.project.taskplanner.databinding.ItemSubtaskRecyclerviewBinding
 
 class RecyclerViewSubtaskAdapter(val context : Context) : RecyclerView.Adapter<RecyclerViewSubtaskAdapter.MyViewHolder>() {
 
-    var subTaskList = ArrayList<SubTaskInterim>()
+    private var subTaskList = ArrayList<SubTaskInterim>()
     private var listener : OnItemViewClickListener? = null
     inner class MyViewHolder(itemView : View) : ViewHolder(itemView){
         private val binding = ItemSubtaskRecyclerviewBinding.bind(itemView)
@@ -93,15 +93,14 @@ class RecyclerViewSubtaskAdapter(val context : Context) : RecyclerView.Adapter<R
         notifyItemChanged(position)
     }
 
-    fun updateSubtask(position: Int){
-
-    }
-
     fun deleteSubtask(position: Int){
         subTaskList.removeAt(position)
         notifyItemRemoved(position)
     }
 
+    fun getAdapterList() : List<SubTaskInterim>{
+        return subTaskList
+    }
     interface OnItemViewClickListener{
         fun onCheckboxItemClick(view: View, position: Int, isChecked : Boolean)
         fun onDeleteButtonClick(view: View, position: Int)
@@ -109,6 +108,12 @@ class RecyclerViewSubtaskAdapter(val context : Context) : RecyclerView.Adapter<R
 
     fun setOnItemViewClickListener(listener : OnItemViewClickListener){
         this.listener = listener
+    }
+
+    fun setList(newList : List<SubTaskInterim>){
+        subTaskList.clear()
+        subTaskList.addAll(newList)
+        notifyDataSetChanged()
     }
 
 }

@@ -10,10 +10,9 @@ import com.project.taskplanner.R
 import com.project.taskplanner.databinding.ItemCategoryRecyclerviewBinding
 import java.util.stream.Collectors
 
-class RecyclerViewCategoryAdapter :
-    RecyclerView.Adapter<RecyclerViewCategoryAdapter.MyViewHolder>() {
+class RecyclerViewCategoryAdapter : RecyclerView.Adapter<RecyclerViewCategoryAdapter.MyViewHolder>() {
 
-    var categoryList = ArrayList<CategoryInterim>()
+    private val categoryList = ArrayList<CategoryInterim>()
     private var listener : MyOnItemClickListener? = null
 
     inner class MyViewHolder(itemView: View) : ViewHolder(itemView) {
@@ -70,6 +69,16 @@ class RecyclerViewCategoryAdapter :
             .map { cat-> cat.name }
             .collect(Collectors.toList())
             .contains(nameCategory)
+    }
+
+    fun setAdapterList(newList : List<CategoryInterim>){
+        categoryList.clear()
+        categoryList.addAll(newList)
+        notifyDataSetChanged()
+    }
+
+    fun getItem(position: Int) : CategoryInterim{
+        return categoryList[position]
     }
 
     interface MyOnItemClickListener{
