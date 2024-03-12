@@ -4,35 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/hostFragment"
     app:startDestination="@id/id_item_notes_bottom_nav_bar">
-
-    <fragment
-        android:id="@+id/id_item_tasks_bottom_nav_bar"
-        android:name="com.project.taskplanner.presentation.fragments.tasks.FragmentTasks"
-        android:label="FragmentTasks"
-        tools:layout="@layout/fragment_tasks">
-        <action
-            android:id="@+id/action_fragmentTasks_to_fragmentNotes"
-            app:destination="@id/id_item_notes_bottom_nav_bar" />
-    </fragment>
     <fragment
         android:id="@+id/id_item_notes_bottom_nav_bar"
         android:name="com.project.taskplanner.presentation.fragments.notes.FragmentNotes"
-        android:label="FragmentNotes"
-        tools:layout="@layout/fragment_notes">
-        <action
-            android:id="@+id/action_fragmentNotes_to_fragmentTasks"
-            app:destination="@id/id_item_tasks_bottom_nav_bar" />
-        <argument
-            android:name="noteInterim"
-            app:argType="com.project.domain.models.NoteInterim" />
-    </fragment>
+        android:label="fragment_notes"
+        tools:layout="@layout/fragment_notes" />
     <fragment
-        android:id="@+id/addNoteFragment"
-        android:name="com.project.taskplanner.presentation.fragments.notes.AddNoteFragment"
-        android:label="fragment_add_note"
-        tools:layout="@layout/add_note_activity" >
-        <action
-            android:id="@+id/action_addNoteFragment_to_id_item_notes_bottom_nav_bar"
-            app:destination="@id/id_item_notes_bottom_nav_bar" />
-    </fragment>
+        android:id="@+id/id_item_tasks_bottom_nav_bar"
+        android:name="com.project.taskplanner.presentation.fragments.tasks.FragmentTask"
+        android:label="FragmentTask" />
 </navigation>
