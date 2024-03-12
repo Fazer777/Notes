@@ -3,6 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/id_category_management"
         android:title="Категории"
-        android:icon="@drawable/ic_category_foreground"
+        android:icon="@drawable/ic_category"
         app:showAsAction="ifRoom"/>
 </menu>
