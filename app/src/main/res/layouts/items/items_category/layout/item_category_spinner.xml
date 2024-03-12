@@ -27,7 +27,7 @@
         android:textColor="@color/black"
         android:textSize="16sp"
         android:gravity="center_vertical"
-        android:text="Simple text"
+        android:hint="@string/title"
         />
 
 </LinearLayout>

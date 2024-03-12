@@ -15,7 +15,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@id/id_nav_host_fragment"
-        app:menu="@menu/note_main_tool_bar" />
+        app:menu="@menu/note_main_tool_bar"/>
 
     <fragment
         android:id="@+id/id_nav_host_fragment"
@@ -40,6 +40,8 @@
         app:layout_constraintTop_toBottomOf="@id/id_nav_host_fragment"
         app:menu="@menu/bottom_navigation_bar"
         android:background="@color/white"
+        app:itemIconTint="@color/bottom_nav_color"
+        app:itemTextColor="@color/bottom_nav_color"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

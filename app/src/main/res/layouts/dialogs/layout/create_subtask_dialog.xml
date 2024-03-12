@@ -24,7 +24,7 @@
                 android:id="@+id/edittext_dialog_title"
                 android:layout_width="0dp"
                 android:layout_height="50dp"
-                android:hint="input title subtask"
+                android:hint="@string/title"
                 android:drawableStart="@drawable/ic_edit"
                 android:drawablePadding="10dp"
                 android:paddingStart="5dp"
@@ -34,6 +34,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_margin="20dp"
+                android:importantForAutofill="no"
                 />
 
             <Button
@@ -45,9 +46,10 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 android:layout_margin="10dp"
-                android:backgroundTint="#FFBF40"
-                android:text="Кнопочка"
+                android:text="@string/add_record"
                 app:cornerRadius="8dp"
+                style="@style/ButtonStyle"
+                android:textSize="15sp"
                 />
 
 

@@ -3,35 +3,36 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     app:behavior_peekHeight="56dp">
 
         <ImageButton
             android:id="@+id/id_bot_sheet_btn_close"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:background="@drawable/bot_sheet_rounded_btn_close"
-            android:contentDescription="Отменить"
+            android:background="@color/white"
+            android:contentDescription="@string/close"
             android:src="@drawable/ic_close"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:tint="@color/black"
             android:clickable="true"
-            android:foreground="?android:attr/selectableItemBackgroundBorderless"
+            app:layout_constraintCircleRadius="100dp"
+            android:foreground="?actionBarItemBackground"
             />
 
         <ImageButton
             android:id="@+id/id_bot_sheet_btn_confirm"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:background="@drawable/bot_sheet_rounded_btn_add"
-            android:contentDescription="Добавить категорию"
+            android:scaleType="center"
+            android:background="@color/white"
+            android:contentDescription="@string/confirm_creation"
             android:src="@drawable/ic_check"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:tint="@color/black"
             android:clickable="true"
-            android:foreground="?android:attr/selectableItemBackgroundBorderless" />
+            android:foreground="?actionBarItemBackground" />
 
         <TextView
             android:id="@+id/id_bot_sheet_text_view"
@@ -44,7 +45,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="packed"
-            android:spinnerMode="dropdown"
             android:gravity="center"
             android:textAlignment="center"
             android:background="@drawable/color_blob"
@@ -56,7 +56,7 @@
             android:layout_height="50dp"
             android:layout_margin="10dp"
             android:background="@drawable/rounded_edittext_states"
-            android:hint="Название категории"
+            android:hint="@string/name_category"
             android:importantForAutofill="no"
             android:inputType="textAutoCorrect"
             android:paddingStart="15dp"
