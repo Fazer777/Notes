@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/set_grid_layout"
+        android:icon="@drawable/ic_grid_layout"
+        android:title="Сетка"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:title="Список"
+        android:id="@+id/set_linear_layout"
+        android:icon="@drawable/ic_linear_layout"
+        app:showAsAction="ifRoom" />
+</menu>
