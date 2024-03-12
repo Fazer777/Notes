@@ -9,9 +9,9 @@ import android.widget.ImageButton
 import androidx.activity.addCallback
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.project.domain.models.CategoryInterim
@@ -21,14 +21,17 @@ import com.project.taskplanner.databinding.CategoryActivityBinding
 import com.project.taskplanner.presentation.adapters.category.RecyclerViewCategoryAdapter
 import com.project.taskplanner.presentation.dialogs.GridViewDialog
 import com.project.taskplanner.presentation.viewmodels.categories.CategoryVM
-import com.project.taskplanner.presentation.viewmodels.categories.CategoryViewModelFactory
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class CategoryActivity : AppCompatActivity() {
     private lateinit var binding : CategoryActivityBinding
     private lateinit var bindingBottomSheet : BottomSheetCategoriesBinding
     private var categoryAdapter = RecyclerViewCategoryAdapter()
-    private lateinit var viewModel : CategoryVM
+    private val viewModel by viewModel<CategoryVM>()
 
     private lateinit var colorStringArray : Array<String>
 
@@ -42,13 +45,8 @@ class CategoryActivity : AppCompatActivity() {
         binding = CategoryActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        viewModel = ViewModelProvider(
-            this@CategoryActivity,
-            CategoryViewModelFactory(this@CategoryActivity)
-        ).get(CategoryVM::class.java)
-
-        viewModel.categoriesLive.observe(this@CategoryActivity){
-            categoryAdapter.categoryList = it
+        viewModel.categoriesLive.observe(this@CategoryActivity){newList ->
+            categoryAdapter.setAdapterList(newList = newList)
         }
 
         colorStringArray = resources.getStringArray(R.array.color_values)
@@ -58,9 +56,13 @@ class CategoryActivity : AppCompatActivity() {
 
         onBackPressedDispatcher.addCallback(this ) {
             val intent = Intent()
-            intent.putExtra("Changes", isDeleted)
+            intent.putExtra(resources.getString(R.string.INTENT_CATEGORY_CHANGED), isDeleted)
             setResult(RESULT_OK, intent)
             finish()
+        }
+
+        CoroutineScope(Dispatchers.Main).launch {
+            viewModel.getCategories()
         }
     }
 
@@ -91,7 +93,7 @@ class CategoryActivity : AppCompatActivity() {
             if (text.isBlank()){
                 Toast.makeText(
                     this@CategoryActivity,
-                    "Отсутствует название категории",
+                    resources.getString(R.string.name_category_is_empty),
                     Toast.LENGTH_SHORT
                 ).show()
                 return@setOnClickListener
@@ -100,7 +102,7 @@ class CategoryActivity : AppCompatActivity() {
             if (categoryAdapter.checkDuplicate(text)){
                 Toast.makeText(
                     this@CategoryActivity,
-                    "Такая категория уже существует",
+                    resources.getString(R.string.category_already_exists),
                     Toast.LENGTH_SHORT
                 ).show()
                 return@setOnClickListener
@@ -135,8 +137,10 @@ class CategoryActivity : AppCompatActivity() {
             categoryAdapter.itemCount
         )
 
-        viewModel.onAddButtonClicked(categoryInterim)
-        categoryAdapter.addCategory(categoryInterim)
+        CoroutineScope(Dispatchers.Main).launch {
+            viewModel.onAddButtonClicked(categoryInterim)
+            categoryAdapter.addCategory(categoryInterim)
+        }
     }
 
     private fun initRecyclerView() = with(binding){
@@ -149,24 +153,28 @@ class CategoryActivity : AppCompatActivity() {
                 if (position == 0) {
                     Toast.makeText(
                         this@CategoryActivity,
-                        "can't removed",
+                        resources.getString(R.string.can_not_removed),
                         Toast.LENGTH_SHORT
                     ).show()
                     return
                 }
                 AlertDialog.Builder(this@CategoryActivity)
-                    .setTitle("Удалить выбранную категорию?")
-                    .setNegativeButton("Нет"){ dialogInterface : DialogInterface?, i : Int ->
-                        Toast.makeText(
-                            this@CategoryActivity,
-                            "Удаление отменено",
-                            Toast.LENGTH_SHORT).show()
-
+                    .setTitle(resources.getString(R.string.delete_selected_category))
+                    .setNegativeButton(resources.getString(R.string.negativeAnswer)){ dialogInterface : DialogInterface?, i : Int ->
                         dialogInterface?.dismiss()
                     }
-                    .setPositiveButton("Да"){dialogInterface : DialogInterface?, i : Int ->
-                        viewModel.onDeleteButtonClicked(categoryAdapter.categoryList[position].itemIndex)
-                        categoryAdapter.deleteCategory(position)
+                    .setPositiveButton(resources.getString(R.string.positiveAnswer)){dialogInterface : DialogInterface?, i : Int ->
+
+                        Toast.makeText(
+                            this@CategoryActivity,
+                            resources.getString(R.string.category_deleted),
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                        CoroutineScope(Dispatchers.Main).launch{
+                            viewModel.onDeleteButtonClicked(categoryAdapter.getItem(position).itemIndex)
+                            categoryAdapter.deleteCategory(position)
+                        }
                         isDeleted = true
                         dialogInterface?.dismiss()
 
