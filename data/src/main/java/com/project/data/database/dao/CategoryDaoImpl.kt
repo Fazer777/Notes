@@ -7,69 +7,68 @@ import com.project.data.database.dao.dao_interface.ICategoryDao
 import com.project.data.database.tables.TableCategories
 import com.project.data.database.tables.TableNotes
 import com.project.data.models.Category
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlin.Int
 import kotlin.Long
 import kotlin.arrayOf
 
 
-class CategoryDaoImpl(val context : Context) : ICategoryDao {
+class CategoryDaoImpl(val context: Context) : ICategoryDao {
 
     private val dbHelper = DbHelper(context)
 
-    override fun addCategory(category: Category) {
-        val r = Runnable {
-            val cv = ContentValues()
-            cv.put(TableCategories.NAME, category.name)
-            cv.put(TableCategories.COLOR, category.color)
-            cv.put(TableCategories.ITEM_INDEX, category.itemIndex)
+    override suspend fun addCategory(category: Category) = withContext(Dispatchers.IO) {
 
-            insert(cv)
-        }
-        Thread(r, "ThreadAddCategory").start()
+        val cv = ContentValues()
+        cv.put(TableCategories.NAME, category.name)
+        cv.put(TableCategories.COLOR, category.color)
+        cv.put(TableCategories.ITEM_INDEX, category.itemIndex)
+
+        insert(cv)
     }
 
-    override fun deleteCategory(itemIndex: Int) {
-        val r = Runnable {
-            val sqlQuery = "SELECT ${TableCategories.TABLE_NAME}.${TableCategories.ID} " +
-                    "FROM ${TableCategories.TABLE_NAME} " +
-                    "WHERE ${TableCategories.ITEM_INDEX} = ?"
+    override suspend fun deleteCategory(itemIndex: Int) = withContext(Dispatchers.IO) {
 
-            var categoryId: Int = 1
-            dbHelper.readableDatabase.use { db ->
-                db.rawQuery(sqlQuery, arrayOf(itemIndex.toString())).use { cursor ->
-                    cursor.moveToFirst()
-                    categoryId = cursor.getInt(cursor.getColumnIndexOrThrow(TableCategories.ID))
-                }
+        val sqlQuery = "SELECT ${TableCategories.TABLE_NAME}.${TableCategories.ID} " +
+                "FROM ${TableCategories.TABLE_NAME} " +
+                "WHERE ${TableCategories.ITEM_INDEX} = ?"
+
+        var categoryId: Int = 1
+        dbHelper.readableDatabase.use { db ->
+            db.rawQuery(sqlQuery, arrayOf(itemIndex.toString())).use { cursor ->
+                cursor.moveToFirst()
+                categoryId = cursor.getInt(cursor.getColumnIndexOrThrow(TableCategories.ID))
             }
+        }
 
-            // Replace category will deleted by default
-            val cv = ContentValues()
-            cv.put(TableNotes.CATEGORY_ID, 1)
-            val whereClauseNote = "${TableNotes.CATEGORY_ID} = ?"
-            val whereArgsNote = arrayOf(categoryId.toString())
-            dbHelper.writableDatabase.use { db ->
-                db.update(TableNotes.TABLE_NAME, cv, whereClauseNote, whereArgsNote)
-            }
+        // Replace category will deleted by default
+        val cv = ContentValues()
+        cv.put(TableNotes.CATEGORY_ID, 1)
+        val whereClauseNote = "${TableNotes.CATEGORY_ID} = ?"
+        val whereArgsNote = arrayOf(categoryId.toString())
+        dbHelper.writableDatabase.use { db ->
+            db.update(TableNotes.TABLE_NAME, cv, whereClauseNote, whereArgsNote)
+        }
 
-            // Delete category
-            val whereClauseCategory = "${TableCategories.ITEM_INDEX} = ?"
-            val whereArgsCategory = arrayOf(itemIndex.toString())
-            dbHelper.writableDatabase.use { db ->
-                db.delete(
-                    TableCategories.TABLE_NAME,
-                    whereClauseCategory,
-                    whereArgsCategory
-                )
-                db.execSQL("UPDATE ${TableCategories.TABLE_NAME} " +
+        // Delete category
+        val whereClauseCategory = "${TableCategories.ITEM_INDEX} = ?"
+        val whereArgsCategory = arrayOf(itemIndex.toString())
+        dbHelper.writableDatabase.use { db ->
+            db.delete(
+                TableCategories.TABLE_NAME,
+                whereClauseCategory,
+                whereArgsCategory
+            )
+            db.execSQL(
+                "UPDATE ${TableCategories.TABLE_NAME} " +
                         "SET ${TableCategories.ITEM_INDEX} = ${TableCategories.ITEM_INDEX} - 1 " +
-                        "WHERE ${TableCategories.ITEM_INDEX} > $itemIndex")
-            }
-
+                        "WHERE ${TableCategories.ITEM_INDEX} > $itemIndex"
+            )
         }
-        Thread(r, "ThreadDeleteCategory").start()
     }
 
-    override fun getCategories(): List<Category> {
+    override suspend fun getCategories(): List<Category> = withContext(Dispatchers.IO) {
 
         val listCategories = mutableListOf<Category>()
 
@@ -87,19 +86,18 @@ class CategoryDaoImpl(val context : Context) : ICategoryDao {
                 }
             }
         }
-        return listCategories
+        return@withContext listCategories
     }
 
-    private fun insert(cv : ContentValues){
+    private fun insert(cv: ContentValues) {
         dbHelper.writableDatabase.use {
             it.beginTransaction()
             try {
-                val res : Long = it.insert(TableCategories.TABLE_NAME, null, cv)
-                if(res.toInt() != -1){
+                val res: Long = it.insert(TableCategories.TABLE_NAME, null, cv)
+                if (res.toInt() != -1) {
                     it.setTransactionSuccessful()
                 }
-            }
-            finally {
+            } finally {
                 it.endTransaction()
             }
         }
