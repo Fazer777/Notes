@@ -6,24 +6,26 @@ import com.project.data.models.Note
 import com.project.domain.models.CategoryInterim
 import com.project.domain.models.NoteInterim
 import com.project.domain.repository.INoteRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 
 class NoteRepositoryImpl(val noteDao : INoteDao) : INoteRepository {
 
-    override fun addNote(noteInterim: NoteInterim) {
+    override suspend fun addNote(noteInterim: NoteInterim) = withContext(Dispatchers.IO) {
         noteDao.addNote(mapToNote(noteInterim))
     }
 
-    override  fun updateNote(noteInterim: NoteInterim) {
+    override suspend fun updateNote(noteInterim: NoteInterim )  = withContext(Dispatchers.IO) {
         noteDao.updateNote(mapToNote(noteInterim))
     }
 
-    override  fun deleteNote(itemIndex: Int) {
+    override suspend fun deleteNote(itemIndex: Int)  = withContext(Dispatchers.IO){
         noteDao.deleteNote(itemIndex)
     }
 
-    override fun getNotes(): List<NoteInterim> {
-        return noteDao.readAllData().map { it -> mapToNoteInterim(it)}
+    override suspend fun getNotes(): List<NoteInterim> = withContext(Dispatchers.IO)  {
+        return@withContext noteDao.readAllData().map { it -> mapToNoteInterim(it)}
     }
 
 

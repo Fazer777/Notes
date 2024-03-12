@@ -8,75 +8,70 @@ import com.project.data.database.tables.TableCategories
 import com.project.data.database.tables.TableNotes
 import com.project.data.models.Category
 import com.project.data.models.Note
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
-class NoteDaoImpl(val context : Context) : INoteDao {
+class NoteDaoImpl(val context: Context) : INoteDao {
 
     private val dbHelper = DbHelper(context)
 
-    override fun addNote(note: Note): Unit {
-        val r : Runnable = Runnable {
-            val cv = ContentValues()
-            cv.put(TableNotes.DESCRIPTION, note.noteDescription)
-            cv.put(
-                TableNotes.DATE_TIME,
-                note.noteDate.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT))
-            )
-            cv.put(
-                TableNotes.CATEGORY_ID,
-                getCategoryIdByName(nameCategory = note.category.name)
-            )
-            cv.put(TableNotes.ITEM_INDEX, note.itemIndex)
+    override suspend fun addNote(note: Note) = withContext(Dispatchers.IO)  {
+        val cv = ContentValues()
+        cv.put(TableNotes.DESCRIPTION, note.noteDescription)
+        cv.put(
+            TableNotes.DATE_TIME,
+            note.noteDate.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT))
+        )
+        cv.put(
+            TableNotes.CATEGORY_ID,
+            getCategoryIdByName(nameCategory = note.category.name)
+        )
+        cv.put(TableNotes.ITEM_INDEX, note.itemIndex)
 
-            insert(cv)
+        insert(cv)
 
-        }
-        Thread(r, "ThreadInsertNote").start()
     }
 
-    override fun deleteNote(itemIndex: Int) {
-        val r : Runnable = Runnable {
-            val whereDeleteNote = "${TableNotes.ITEM_INDEX} = ?"
-            val whereArgs = arrayOf(itemIndex.toString())
-            dbHelper.writableDatabase.use {
-                it.beginTransaction()
-                try {
-                    val res = it.delete(TableNotes.TABLE_NAME, whereDeleteNote, whereArgs)
-                    if (res != 0){
-                        it.setTransactionSuccessful()
-                    }
-                    it.execSQL("UPDATE ${TableNotes.TABLE_NAME} " +
-                            "SET ${TableNotes.ITEM_INDEX} = ${TableNotes.ITEM_INDEX} - 1 " +
-                            "WHERE ${TableNotes.ITEM_INDEX} > $itemIndex")
-                } finally {
-                    it.endTransaction()
+    override suspend fun deleteNote(itemIndex: Int) = withContext(Dispatchers.IO) {
+        val whereDeleteNote = "${TableNotes.ITEM_INDEX} = ?"
+        val whereArgs = arrayOf(itemIndex.toString())
+        dbHelper.writableDatabase.use {
+            it.beginTransaction()
+            try {
+                val res = it.delete(TableNotes.TABLE_NAME, whereDeleteNote, whereArgs)
+                if (res != 0) {
+                    it.setTransactionSuccessful()
                 }
+                it.execSQL(
+                    "UPDATE ${TableNotes.TABLE_NAME} " +
+                            "SET ${TableNotes.ITEM_INDEX} = ${TableNotes.ITEM_INDEX} - 1 " +
+                            "WHERE ${TableNotes.ITEM_INDEX} > $itemIndex"
+                )
+            } finally {
+                it.endTransaction()
             }
         }
-        Thread(r, "ThreadDeleteNote").start()
     }
 
-    override fun updateNote(note: Note) {
-        val r = Runnable {
-            val cv = ContentValues()
-            cv.put(TableNotes.DESCRIPTION, note.noteDescription)
-            cv.put(TableNotes.CATEGORY_ID, getCategoryIdByName(note.category.name))
-            cv.put(
-                TableNotes.DATE_TIME,
-                note.noteDate.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT))
-            )
-            cv.put(TableNotes.ITEM_INDEX, note.itemIndex)
+    override suspend fun updateNote(note: Note) = withContext(Dispatchers.IO) {
 
-            updateByItemIndex(cv)
-        }
+        val cv = ContentValues()
+        cv.put(TableNotes.DESCRIPTION, note.noteDescription)
+        cv.put(TableNotes.CATEGORY_ID, getCategoryIdByName(note.category.name))
+        cv.put(
+            TableNotes.DATE_TIME,
+            note.noteDate.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT))
+        )
+        cv.put(TableNotes.ITEM_INDEX, note.itemIndex)
 
-        Thread(r, "ThreadUpdateNote").start()
+        updateByItemIndex(cv)
     }
 
 
-    override fun readAllData(): MutableList<Note> {
+    override suspend fun readAllData(): List<Note> = withContext(Dispatchers.IO)  {
         val listNotes = mutableListOf<Note>()
 
         val sqlQuery = "SELECT * " +
@@ -105,32 +100,15 @@ class NoteDaoImpl(val context : Context) : INoteDao {
                 }
             }
         }
-        return listNotes
+        return@withContext listNotes
     }
 
-    private fun insert(cv : ContentValues){
+    private fun insert(cv: ContentValues) {
         dbHelper.writableDatabase.use {
             it.beginTransaction()
             try {
-                val res : Long = it.insert(TableNotes.TABLE_NAME, null, cv)
-                if(res.toInt() != -1){
-                    it.setTransactionSuccessful()
-                }
-            }
-            finally {
-                it.endTransaction()
-            }
-        }
-    }
-
-    private fun updateByItemIndex(cv : ContentValues){
-        val selection = "${TableNotes.ITEM_INDEX} = ?"
-        val selectionArgs = arrayOf("${cv.getAsInteger(TableNotes.ITEM_INDEX)}")
-        dbHelper.writableDatabase.use {
-            it.beginTransaction()
-            try {
-                val res = it.update(TableNotes.TABLE_NAME, cv, selection, selectionArgs)
-                if (res != -1){
+                val res: Long = it.insert(TableNotes.TABLE_NAME, null, cv)
+                if (res.toInt() != -1) {
                     it.setTransactionSuccessful()
                 }
             } finally {
@@ -139,9 +117,25 @@ class NoteDaoImpl(val context : Context) : INoteDao {
         }
     }
 
-    private fun getCategoryIdByName(nameCategory : String) : Int{
+    private fun updateByItemIndex(cv: ContentValues) {
+        val selection = "${TableNotes.ITEM_INDEX} = ?"
+        val selectionArgs = arrayOf("${cv.getAsInteger(TableNotes.ITEM_INDEX)}")
+        dbHelper.writableDatabase.use {
+            it.beginTransaction()
+            try {
+                val res = it.update(TableNotes.TABLE_NAME, cv, selection, selectionArgs)
+                if (res != -1) {
+                    it.setTransactionSuccessful()
+                }
+            } finally {
+                it.endTransaction()
+            }
+        }
+    }
 
-        val sqlQuery  = "SELECT ${TableCategories.TABLE_NAME}.${TableCategories.ID} " +
+    private fun getCategoryIdByName(nameCategory: String): Int {
+
+        val sqlQuery = "SELECT ${TableCategories.TABLE_NAME}.${TableCategories.ID} " +
                 "FROM ${TableCategories.TABLE_NAME} " +
                 "WHERE ${TableCategories.NAME} = ?"
 
@@ -156,5 +150,6 @@ class NoteDaoImpl(val context : Context) : INoteDao {
         }
         return categoryId
     }
-
 }
+
+
