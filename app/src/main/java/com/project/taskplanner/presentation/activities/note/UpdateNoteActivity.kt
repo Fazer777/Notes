@@ -7,16 +7,16 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.lifecycle.ViewModelProvider
 import com.project.domain.models.CategoryInterim
 import com.project.domain.models.NoteInterim
 import com.project.taskplanner.R
 import com.project.taskplanner.databinding.UpdateNoteActivityBinding
 import com.project.taskplanner.presentation.adapters.category.CategorySpinnerAdapter
 import com.project.taskplanner.presentation.viewmodels.notes.UpdateNoteVM
-import com.project.taskplanner.presentation.viewmodels.notes.UpdateNoteViewModelFactory
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.Serializable
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -30,7 +30,7 @@ class UpdateNoteActivity : AppCompatActivity() {
 
     private lateinit var toolbar : Toolbar
     private lateinit var binding: UpdateNoteActivityBinding
-    private lateinit var viewModel : UpdateNoteVM
+    private val viewModel by viewModel<UpdateNoteVM>()
 
     private var itemIndex = 0
    // private var itemPos = 0
@@ -46,10 +46,6 @@ class UpdateNoteActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = "Редактирование"
 
-        viewModel = ViewModelProvider(
-            this@UpdateNoteActivity,
-            UpdateNoteViewModelFactory(this@UpdateNoteActivity)
-        ).get(UpdateNoteVM::class.java)
 
         viewModel.categoriesLive.observe(this@UpdateNoteActivity){
             categorySpinnerAdapter.categoryList = it
