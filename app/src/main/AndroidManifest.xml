@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <application
+        android:name=".application.App"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -23,6 +24,6 @@
         <activity android:name=".presentation.activities.note.AddNoteActivity"/>
         <activity android:name=".presentation.activities.note.UpdateNoteActivity"/>
         <activity android:name=".presentation.activities.category.CategoryActivity"/>
-        <activity android:name=".presentation.activities.task.AddTaskActivity"/>
+        <activity android:name=".presentation.activities.task.EditTaskActivity"/>
     </application>
 </manifest>
