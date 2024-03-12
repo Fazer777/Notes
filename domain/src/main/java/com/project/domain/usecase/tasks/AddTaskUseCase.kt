@@ -5,7 +5,7 @@ import com.project.domain.models.TaskInterim
 import com.project.domain.repository.ITaskRepository
 
 class AddTaskUseCase(private val taskRepository: ITaskRepository) {
-    fun execute(taskInterim: TaskInterim) : TaskDTO {
-       return taskRepository.addTask(taskInterim)
+    suspend fun execute(taskInterim: TaskInterim) : Int{
+        return taskRepository.addTask(taskInterim =  taskInterim)
     }
 }
