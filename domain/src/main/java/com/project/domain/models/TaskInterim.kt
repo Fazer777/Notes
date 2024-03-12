@@ -7,7 +7,7 @@ data class TaskInterim(
     var id : Int,
     val title : String,
     val description : String,
-    val subTasks : List<SubTaskInterim>?,
+    var subTasks : List<SubTaskInterim>?,
     val color : Int,
     val appointedDate : LocalDate, // Назначеная дата пользователем при создании задачи
     var completionDate : LocalDate?, // Дата завершения задачи
