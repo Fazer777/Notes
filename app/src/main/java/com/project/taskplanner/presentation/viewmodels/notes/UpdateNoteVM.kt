@@ -5,6 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.project.domain.models.CategoryInterim
 import com.project.domain.usecase.categories.GetCategoriesUseCase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class UpdateNoteVM(
     private val getCategoriesUseCase : GetCategoriesUseCase
@@ -18,7 +21,9 @@ class UpdateNoteVM(
 
     init {
         isVisibleCheckMutableLive.value = false
-        categoriesMutableLive.value = getCategoriesUseCase.execute()
+        CoroutineScope(Dispatchers.IO).launch {
+            categoriesMutableLive.postValue(getCategoriesUseCase.execute())
+        }
     }
 
     fun textChanged(text : String) : Unit{
