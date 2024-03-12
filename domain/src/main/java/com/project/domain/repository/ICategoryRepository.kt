@@ -3,7 +3,7 @@ package com.project.domain.repository
 import com.project.domain.models.CategoryInterim
 
 interface ICategoryRepository {
-    fun addCategory(categoryInterim: CategoryInterim) : Unit
-    fun deleteCategory(itemIndex : Int)
-    fun getCategories() : List<CategoryInterim>
+    suspend fun addCategory(categoryInterim: CategoryInterim)
+    suspend fun deleteCategory(itemIndex : Int)
+    suspend fun getCategories() : List<CategoryInterim>
 }
