@@ -25,6 +25,7 @@ class RecyclerViewNoteAdapter() : RecyclerView.Adapter<RecyclerViewNoteAdapter.V
             idTvDateNotePreview.text = noteInterim
                 .noteDate
                 .format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT))
+            textViewNoteCategory.text = noteInterim.category.name
 
             itemView.setOnClickListener {
                 listener?.let {
