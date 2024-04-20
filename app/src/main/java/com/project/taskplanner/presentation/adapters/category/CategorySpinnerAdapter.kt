@@ -6,12 +6,12 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
-import com.project.domain.models.CategoryInterim
+import com.project.domain.models.category.CategoryParam
 import com.project.taskplanner.R
 
 class CategorySpinnerAdapter(): BaseAdapter() {
 
-    var categoryList : List<CategoryInterim> = listOf()
+    private var categoryList : List<CategoryParam> = listOf()
 
     override fun getCount(): Int {
         return categoryList.count()
@@ -34,9 +34,12 @@ class CategorySpinnerAdapter(): BaseAdapter() {
         return 0
     }
 
-    fun addCategory(){
-
+    fun setList(newList : List<CategoryParam>){
+        categoryList = newList
+        notifyDataSetChanged()
     }
+
+
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View? {
         var view : View? = convertView
