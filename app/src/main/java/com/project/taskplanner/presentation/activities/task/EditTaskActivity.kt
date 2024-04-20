@@ -2,22 +2,24 @@ package com.project.taskplanner.presentation.activities.task
 
 import android.app.DatePickerDialog
 import android.app.Dialog
-import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.project.domain.models.SubTaskInterim
-import com.project.domain.models.TaskInterim
+import com.project.domain.models.task.SubtaskParam
+import com.project.domain.models.task.TaskParam
 import com.project.taskplanner.R
 import com.project.taskplanner.databinding.EditTaskActivityBinding
 import com.project.taskplanner.presentation.adapters.task.RecyclerViewSubtaskAdapter
 import com.project.taskplanner.presentation.dialogs.GridViewDialog
+import com.project.taskplanner.presentation.viewmodels.tasks.EditTaskViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -25,11 +27,13 @@ import java.util.Calendar
 
 class EditTaskActivity : AppCompatActivity() {
     private lateinit var binding : EditTaskActivityBinding
+    private val viewModel : EditTaskViewModel by viewModel()
     private var subtaskAdapter = RecyclerViewSubtaskAdapter(this@EditTaskActivity)
     private lateinit var colorStringArray : Array<String>
-    // Required value
+
     private var selectedColor : String = ""
     private var selectedDate : LocalDate? = null
+    private var completionDate : LocalDate? = null
     private var isEditAction = false
     private var tempIdTask = 0
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,25 +56,26 @@ class EditTaskActivity : AppCompatActivity() {
         else{
             isEditAction = true
             binding.materialBtnAddEditTask.text = resources.getString(R.string.edit_record)
-            val taskInterim = bundle.getSerializable(resources.getString(R.string.INTENT_UPDATE_TASK)) as TaskInterim?
-            taskInterim?.let {
+            val taskParam = bundle.getSerializable(resources.getString(R.string.INTENT_UPDATE_TASK)) as TaskParam?
+            taskParam?.let {
                 tempIdTask = it.id
                 setIntentData(it)
             }
         }
     }
 
-    private fun setIntentData(taskInterim: TaskInterim) = with(binding) {
-        checkboxTask.isChecked = taskInterim.isChecked
-        editTextTitleTask.setText(taskInterim.title)
-        editTextTaskDescription.setText(taskInterim.description)
-        cardViewColorTask.setCardBackgroundColor(taskInterim.color)
-        taskInterim.subTasks?.let {
+    private fun setIntentData(taskParam: TaskParam) = with(binding) {
+        checkboxTask.isChecked = taskParam.isChecked
+        editTextTitleTask.setText(taskParam.title)
+        editTextTaskDescription.setText(taskParam.description)
+        cardViewColorTask.setCardBackgroundColor(taskParam.color)
+        taskParam.subTasks.let {
             subtaskAdapter.setList(it)
         }
-        textViewDateTask.text = taskInterim.appointedDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM))
-        selectedDate =taskInterim.appointedDate
-        selectedColor = colorIntToString(taskInterim.color)
+        textViewDateTask.text = taskParam.appointedDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM))
+        selectedDate =taskParam.appointedDate
+        completionDate = taskParam.completionDate
+        selectedColor = colorIntToString(taskParam.color)
     }
 
     private fun setDefaultColor(){
@@ -95,11 +100,11 @@ class EditTaskActivity : AppCompatActivity() {
 
     private fun initActions() = with(binding){
 
-        binding.floatBtnAddSubtask.setOnClickListener {
+        floatBtnAddSubtask.setOnClickListener {
             initSubtaskDialog()
         }
 
-        binding.materialBtnAddEditTask.setOnClickListener {
+        materialBtnAddEditTask.setOnClickListener {
             if (selectedDate == null){
                 Toast.makeText(
                     this@EditTaskActivity,
@@ -111,11 +116,16 @@ class EditTaskActivity : AppCompatActivity() {
             createTask()
         }
 
-        binding.cardViewColorTask.setOnClickListener {
+        cardViewColorTask.setOnClickListener {
             initColorDialog()
         }
 
-        binding.textViewDateTask.setOnClickListener {
+        checkboxTask.setOnClickListener {
+            val flag = (it as CheckBox).isChecked
+            completionDate = if (flag) LocalDate.now() else null
+        }
+
+        textViewDateTask.setOnClickListener {
             val calendar = Calendar.getInstance()
             val dateDialog = DatePickerDialog(
                 this@EditTaskActivity,
@@ -139,30 +149,26 @@ class EditTaskActivity : AppCompatActivity() {
 
     private fun createTask() = with(binding) {
 
-        val taskInterim = TaskInterim(
+        val taskParam = TaskParam(
             id = 0,
             title = editTextTitleTask.text.toString(),
             description = editTextTaskDescription.text.toString(),
             subTasks = subtaskAdapter.getAdapterList(),
             color = Color.parseColor(selectedColor),
             appointedDate = selectedDate!!,
-            completionDate = null,
+            completionDate = completionDate,
             isChecked = checkboxTask.isChecked
         )
 
-        if (taskInterim.isChecked)
-            taskInterim.completionDate = LocalDate.now()
-
-        val intent = Intent()
         if(isEditAction){
-            taskInterim.id = tempIdTask
-            intent.putExtra(resources.getString(R.string.INTENT_UPDATE_TASK), taskInterim)
+            taskParam.id = tempIdTask
+            viewModel.updateTask(updatedTask =  taskParam)
         }
         else{
-            intent.putExtra(resources.getString(R.string.INTENT_CREATE_TASK), taskInterim)
+            viewModel.addTask(taskParam)
         }
 
-        setResult(RESULT_OK, intent)
+        setResult(RESULT_OK)
         finish()
     }
 
@@ -182,12 +188,11 @@ class EditTaskActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            val subTaskInterim = SubTaskInterim(0, title, false, 0)
-            subtaskAdapter.addSubTask(subTaskInterim)
+            val subtaskParam = SubtaskParam( title, false, 0)
+            subtaskAdapter.addSubTask(subtaskParam)
 
             dialog.dismiss()
         }
-
         dialog.show()
     }
 
