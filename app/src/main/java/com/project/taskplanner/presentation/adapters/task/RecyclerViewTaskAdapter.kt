@@ -5,10 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.graphics.Paint;
 import android.graphics.drawable.Icon
+import android.util.Log
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.project.domain.models.TaskInterim
+import com.project.domain.models.task.TaskParam
 import com.project.taskplanner.R
 import com.project.taskplanner.databinding.ItemTaskRecyclerviewBinding
 import com.project.taskplanner.presentation.fragments.tasks.LayoutEnum
@@ -18,22 +19,22 @@ import java.time.format.FormatStyle
 
 class RecyclerViewTaskAdapter() : RecyclerView.Adapter<RecyclerViewTaskAdapter.MyViewHolder>() {
 
-    private var taskList = ArrayList<TaskInterim>()
+    private var taskList = ArrayList<TaskParam>()
     private var listener : OnItemClickListener? = null
     private var layoutEnum : LayoutEnum = LayoutEnum.LINEAR
     inner class MyViewHolder(itemView : View) : ViewHolder(itemView){
 
         private val binding = ItemTaskRecyclerviewBinding.bind(itemView)
 
-        fun bind(taskInterim: TaskInterim) = with(binding){
-            textViewTaskTitle.text = taskInterim.title
-            textviewDescTaskPreview.text= taskInterim.description
-            cardViewColorTask.setCardBackgroundColor(taskInterim.color)
+        fun bind(taskParam: TaskParam) = with(binding){
+            textViewTaskTitle.text = taskParam.title
+            textviewDescTaskPreview.text= taskParam.description
+            cardViewColorTask.setCardBackgroundColor(taskParam.color)
 
             setStates(
-                taskInterim.isChecked,
-                taskInterim.appointedDate,
-                taskInterim.completionDate)
+                taskParam.isChecked,
+                taskParam.appointedDate,
+                taskParam.completionDate)
 
             itemView.setOnClickListener {
                 listener?.let {listener->
@@ -86,6 +87,7 @@ class RecyclerViewTaskAdapter() : RecyclerView.Adapter<RecyclerViewTaskAdapter.M
                         setColorFilter(Color.BLUE)
                     }
 
+                    Log.d("AAA", "setStates: ${completionDate.toString()} ")
                     customTextViewDatePreview(completionDate)
                 }
 
@@ -146,22 +148,9 @@ class RecyclerViewTaskAdapter() : RecyclerView.Adapter<RecyclerViewTaskAdapter.M
         holder.bind(taskList[position])
     }
 
-    fun addTask(taskInterim: TaskInterim){
-        taskList.add(taskInterim)
-        notifyItemInserted(taskList.lastIndex)
-    }
 
-    fun deleteTask(position : Int){
-        taskList.removeAt(position)
-        notifyItemRemoved(position)
-    }
 
-    fun updateTask(position: Int, taskInterim: TaskInterim){
-        taskList[position] = taskInterim
-        notifyItemChanged(position)
-    }
-
-    fun setAdapterList(newList : List<TaskInterim>){
+    fun setList(newList : List<TaskParam>){
         taskList.clear()
         taskList.addAll(newList)
         notifyDataSetChanged()
@@ -172,14 +161,8 @@ class RecyclerViewTaskAdapter() : RecyclerView.Adapter<RecyclerViewTaskAdapter.M
         return taskList[position].id.toLong()
     }
 
-    fun getItem(position: Int) : TaskInterim{
+    fun getItem(position: Int) : TaskParam {
         return taskList[position]
-    }
-
-    fun updateTaskFlag(position: Int, flag : Boolean, completionDate: LocalDate){
-        taskList[position].isChecked = flag
-        taskList[position].completionDate = completionDate
-        notifyItemChanged(position)
     }
 
     fun updateLayout(layout : LayoutEnum){
@@ -196,5 +179,4 @@ class RecyclerViewTaskAdapter() : RecyclerView.Adapter<RecyclerViewTaskAdapter.M
     fun setOnItemClickListener(listener: OnItemClickListener){
         this.listener = listener
     }
-
 }

@@ -7,21 +7,21 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.project.domain.models.SubTaskInterim
+import com.project.domain.models.task.SubtaskParam
 import com.project.taskplanner.R
 import com.project.taskplanner.databinding.ItemSubtaskRecyclerviewBinding
 
 
 class RecyclerViewSubtaskAdapter(val context : Context) : RecyclerView.Adapter<RecyclerViewSubtaskAdapter.MyViewHolder>() {
 
-    private var subTaskList = ArrayList<SubTaskInterim>()
+    private var subTaskList = ArrayList<SubtaskParam>()
     private var listener : OnItemViewClickListener? = null
     inner class MyViewHolder(itemView : View) : ViewHolder(itemView){
         private val binding = ItemSubtaskRecyclerviewBinding.bind(itemView)
-        fun bind(subTaskInterim: SubTaskInterim) = with(binding){
+        fun bind(subtaskParam: SubtaskParam) = with(binding){
 
-            setCheckedSubtask(subTaskInterim.isChecked)
-            subItemTextViewName.text = subTaskInterim.title
+            setCheckedSubtask(subtaskParam.isChecked)
+            subItemTextViewName.text = subtaskParam.title
 
             imageBtnChecking.setOnClickListener {view ->
                 listener?.let {
@@ -30,7 +30,7 @@ class RecyclerViewSubtaskAdapter(val context : Context) : RecyclerView.Adapter<R
                         listener?.onCheckboxItemClick(
                             view,
                             position,
-                            subTaskInterim.isChecked
+                            subtaskParam.isChecked
                         )
                     }
                 }
@@ -76,15 +76,12 @@ class RecyclerViewSubtaskAdapter(val context : Context) : RecyclerView.Adapter<R
         holder.bind(subTaskList[position])
     }
 
-    override fun getItemId(position: Int): Long {
-        return subTaskList[position].id.toLong()
-    }
-     fun getItem(position: Int) : SubTaskInterim{
+     fun getItem(position: Int) : SubtaskParam {
         return subTaskList[position]
     }
 
-    fun addSubTask(subTaskInterim: SubTaskInterim){
-        subTaskList.add(subTaskInterim)
+    fun addSubTask(subtaskParam: SubtaskParam){
+        subTaskList.add(subtaskParam)
         notifyItemInserted(subTaskList.lastIndex)
     }
 
@@ -98,7 +95,7 @@ class RecyclerViewSubtaskAdapter(val context : Context) : RecyclerView.Adapter<R
         notifyItemRemoved(position)
     }
 
-    fun getAdapterList() : List<SubTaskInterim>{
+    fun getAdapterList() : List<SubtaskParam>{
         return subTaskList
     }
     interface OnItemViewClickListener{
@@ -110,7 +107,7 @@ class RecyclerViewSubtaskAdapter(val context : Context) : RecyclerView.Adapter<R
         this.listener = listener
     }
 
-    fun setList(newList : List<SubTaskInterim>){
+    fun setList(newList : List<SubtaskParam>){
         subTaskList.clear()
         subTaskList.addAll(newList)
         notifyDataSetChanged()

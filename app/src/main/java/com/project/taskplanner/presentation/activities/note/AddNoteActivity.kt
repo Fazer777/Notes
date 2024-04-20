@@ -1,7 +1,5 @@
 package com.project.taskplanner.presentation.activities.note
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,8 +7,8 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import com.project.domain.models.CategoryInterim
-import com.project.domain.models.NoteInterim
+import com.project.domain.models.category.CategoryParam
+import com.project.domain.models.note.NoteParam
 import com.project.taskplanner.R
 import com.project.taskplanner.databinding.AddNoteActivityBinding
 import com.project.taskplanner.presentation.adapters.category.CategorySpinnerAdapter
@@ -24,10 +22,9 @@ import java.time.format.FormatStyle
 class AddNoteActivity : AppCompatActivity() {
 
     private lateinit var toolbar : Toolbar
-    private val viewModel by viewModel<AddNoteVM>()
     private lateinit var binding: AddNoteActivityBinding
+    private val viewModel by viewModel<AddNoteVM>()
     private var categorySpinnerAdapter = CategorySpinnerAdapter()
-
     private var checkMenuItem : MenuItem? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,9 +38,8 @@ class AddNoteActivity : AppCompatActivity() {
         supportActionBar?.title = "Создание"
 
 
-        viewModel.categoriesLive.observe(this@AddNoteActivity) {
-            categorySpinnerAdapter.categoryList = it
-            categorySpinnerAdapter.notifyDataSetChanged()
+        viewModel.categories.observe(this@AddNoteActivity) {newList ->
+            categorySpinnerAdapter.setList(newList = newList)
         }
 
         initEditText()
@@ -105,24 +101,19 @@ class AddNoteActivity : AppCompatActivity() {
     }
 
     private fun createNote() = with(binding) {
-        var noteInterim : NoteInterim? = null
-        apply {
-            noteInterim = NoteInterim(
-                idAddNoteEdittext.text.toString(),
-                getSelectedCategory(),
-                getDateTimeNow(),
-                itemIndex = 0
-            )
-        }
+        val noteParam = NoteParam(
+            id = 0,
+            description = idAddNoteEdittext.text.toString(),
+            category = getSelectedCategory(),
+            date = getDateTimeNow()
+        )
 
-        val intent = Intent()
-        intent.putExtra(resources.getString(R.string.INTENT_CREATE_NOTE), noteInterim)
-        setResult(Activity.RESULT_OK, intent)
+        viewModel.addNote(noteParam)
         finish()
     }
 
-    private fun getSelectedCategory() : CategoryInterim{
-        return binding.idAddNoteSpinner.selectedItem as CategoryInterim
+    private fun getSelectedCategory() : CategoryParam {
+        return binding.idAddNoteSpinner.selectedItem as CategoryParam
     }
 
     private fun getDateTimeNow() : LocalDateTime {

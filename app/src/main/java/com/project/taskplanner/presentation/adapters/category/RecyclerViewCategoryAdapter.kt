@@ -5,21 +5,21 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.project.domain.models.CategoryInterim
+import com.project.domain.models.category.CategoryParam
 import com.project.taskplanner.R
 import com.project.taskplanner.databinding.ItemCategoryRecyclerviewBinding
 import java.util.stream.Collectors
 
 class RecyclerViewCategoryAdapter : RecyclerView.Adapter<RecyclerViewCategoryAdapter.MyViewHolder>() {
 
-    private val categoryList = ArrayList<CategoryInterim>()
+    private val categoryList = ArrayList<CategoryParam>()
     private var listener : MyOnItemClickListener? = null
 
     inner class MyViewHolder(itemView: View) : ViewHolder(itemView) {
         private val binding = ItemCategoryRecyclerviewBinding.bind(itemView)
-        fun bind(categoryInterim: CategoryInterim) = with(binding){
-            textview.text = categoryInterim.name
-            cardViewColor.setCardBackgroundColor(categoryInterim.color)
+        fun bind(categoryParam: CategoryParam) = with(binding){
+            textview.text = categoryParam.name
+            cardViewColor.setCardBackgroundColor(categoryParam.color)
 
             itemView.setOnLongClickListener {
                 listener?.let {
@@ -47,22 +47,6 @@ class RecyclerViewCategoryAdapter : RecyclerView.Adapter<RecyclerViewCategoryAda
         return categoryList.count()
     }
 
-    fun addCategory(categoryInterim: CategoryInterim){
-        categoryList.add(categoryInterim)
-        notifyItemInserted(categoryInterim.itemIndex)
-    }
-
-    fun deleteCategory(indexElem : Int){
-        categoryList.removeAt(indexElem)
-        notifyItemRemoved(indexElem)
-        updateItemIndex(indexElem)
-    }
-    private fun updateItemIndex(itemIndex : Int){
-        categoryList.parallelStream()
-            .filter { it.itemIndex > itemIndex}
-            .forEach { it -> it.itemIndex -= 1 }
-    }
-
     fun checkDuplicate(nameCategory : String) : Boolean{
         return categoryList
             .parallelStream()
@@ -71,13 +55,13 @@ class RecyclerViewCategoryAdapter : RecyclerView.Adapter<RecyclerViewCategoryAda
             .contains(nameCategory)
     }
 
-    fun setAdapterList(newList : List<CategoryInterim>){
+    fun setAdapterList(newList : List<CategoryParam>){
         categoryList.clear()
         categoryList.addAll(newList)
         notifyDataSetChanged()
     }
 
-    fun getItem(position: Int) : CategoryInterim{
+    fun getItem(position: Int) : CategoryParam {
         return categoryList[position]
     }
 

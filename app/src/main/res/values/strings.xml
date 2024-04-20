@@ -2,11 +2,11 @@
     <string name="app_name">TaskPlanner</string>
 
     <!--Intent Keys-->
-    <string name="INTENT_CREATE_NOTE">create_note</string>
+    <!--    <string name="INTENT_CREATE_NOTE">create_note</string>-->
     <string name="INTENT_UPDATE_NOTE">update_note</string>
-    <string name="INTENT_CREATE_TASK">create_task</string>
+    <!--    <string name="INTENT_CREATE_TASK">create_task</string>-->
     <string name="INTENT_UPDATE_TASK">update_task</string>
-    <string name="INTENT_CATEGORY_CHANGED">update_task</string>
+    <!--    <string name="INTENT_CATEGORY_CHANGED">update_task</string>-->
 
     <!--String resources-->
     <string name="completed_task_string_full">Завершено %1$s</string>
@@ -61,4 +61,9 @@
     <string name="delete_selected_note">Удалить выбранную заметку?</string>
     <string name="delete_selected_task">Удалить выбранную задачу?</string>
     <string name="delete_selected_category">Удалить выбранную категорию?</string>
+
+    <!--Shared Preferences -->
+    <string name="shared_pref_name">shared_preferences</string>
+    <string name="key_layout_state">layout_state</string>
+
 </resources>

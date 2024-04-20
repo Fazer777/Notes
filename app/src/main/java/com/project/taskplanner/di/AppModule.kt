@@ -4,16 +4,14 @@ import com.project.taskplanner.presentation.viewmodels.categories.CategoryVM
 import com.project.taskplanner.presentation.viewmodels.notes.AddNoteVM
 import com.project.taskplanner.presentation.viewmodels.notes.FragmentNotesVM
 import com.project.taskplanner.presentation.viewmodels.notes.UpdateNoteVM
+import com.project.taskplanner.presentation.viewmodels.tasks.EditTaskViewModel
 import com.project.taskplanner.presentation.viewmodels.tasks.FragmentTaskVM
-import com.project.taskplanner.presentation.viewmodels.tasks.subtask.SubtaskViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val appModule = module {
     viewModel<FragmentNotesVM> {
         FragmentNotesVM(
-            addNoteUseCase = get(),
-            updateNoteUseCase = get(),
             deleteNoteUseCase = get(),
             getNotesUseCase = get()
         )
@@ -21,12 +19,14 @@ val appModule = module {
 
     viewModel<AddNoteVM>{
         AddNoteVM(
+            addNoteUseCase = get(),
             getCategoriesUseCase = get()
         )
     }
 
     viewModel<UpdateNoteVM>{
         UpdateNoteVM(
+            updateNoteUseCase = get(),
             getCategoriesUseCase = get()
         )
     }
@@ -34,6 +34,7 @@ val appModule = module {
     viewModel<CategoryVM>{
         CategoryVM(
             addCategoryUseCase = get(),
+            updateDeletedCategoryUseCase = get(),
             deleteCategoryUseCase = get(),
             getCategoriesUseCase = get()
         )
@@ -41,18 +42,16 @@ val appModule = module {
 
     viewModel<FragmentTaskVM>{
         FragmentTaskVM(
-            addTaskUseCase = get(),
             getTaskUseCase = get(),
-            updateTaskUseCase = get(),
             deleteTaskUseCase = get(),
             completeTaskUseCase = get()
         )
     }
 
-    viewModel<SubtaskViewModel>{
-        SubtaskViewModel(
-            addSubtaskUseCase = get(),
-            getSubtaskUseCase = get()
+    viewModel<EditTaskViewModel>{
+        EditTaskViewModel(
+            addTaskUseCase = get(),
+            updateTaskUseCase = get()
         )
     }
 

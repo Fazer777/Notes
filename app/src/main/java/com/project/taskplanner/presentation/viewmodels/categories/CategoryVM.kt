@@ -1,35 +1,47 @@
 package com.project.taskplanner.presentation.viewmodels.categories
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.project.domain.models.CategoryInterim
-import com.project.domain.usecase.categories.AddCategoryUseCase
-import com.project.domain.usecase.categories.DeleteCategoryUseCase
-import com.project.domain.usecase.categories.GetCategoriesUseCase
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
+import com.project.domain.models.category.CategoryParam
+import com.project.domain.usecase.category.AddCategoryUseCase
+import com.project.domain.usecase.category.DeleteCategoryUseCase
+import com.project.domain.usecase.category.GetCategoriesUseCase
+import com.project.domain.usecase.category.UpdateDeletedCategoryUseCase
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class CategoryVM(
     private val addCategoryUseCase: AddCategoryUseCase,
+    private val updateDeletedCategoryUseCase: UpdateDeletedCategoryUseCase,
     private val deleteCategoryUseCase: DeleteCategoryUseCase,
     private val getCategoriesUseCase: GetCategoriesUseCase
-) : ViewModel(){
+) : ViewModel() {
 
-    private val categoriesMutableLive = MutableLiveData<ArrayList<CategoryInterim>>()
-    val categoriesLive : LiveData<ArrayList<CategoryInterim>> = categoriesMutableLive
+    val categories: LiveData<List<CategoryParam>> = getCategoriesLive()
 
-    suspend fun onAddButtonClicked(categoryInterim: CategoryInterim)  {
-        addCategoryUseCase.execute(categoryInterim)
+    fun addCategory(categoryParam: CategoryParam) {
+        viewModelScope.launch {
+            addCategoryUseCase.execute(categoryParam = categoryParam)
+        }
     }
 
-    suspend fun onDeleteButtonClicked(itemIndex : Int) {
-        deleteCategoryUseCase.execute(itemIndex)
+    fun deleteCategory(categoryParam: CategoryParam) {
+        viewModelScope.launch {
+            deleteCategoryUseCase.execute(categoryParam = categoryParam)
+        }
     }
 
-    suspend fun getCategories(){
-        categoriesMutableLive.postValue(getCategoriesUseCase.execute() as ArrayList<CategoryInterim>)
+    fun updateNotesWithDeletedCategory(defaultCategoryId: Long, deletedCategoryId: Long) {
+        viewModelScope.launch {
+            updateDeletedCategoryUseCase.execute(
+                defaultCategoryId = defaultCategoryId,
+                deletedCategoryId = deletedCategoryId
+            )
+        }
+    }
+
+    private fun getCategoriesLive(): LiveData<List<CategoryParam>> {
+        return getCategoriesUseCase.execute().asLiveData()
     }
 }
