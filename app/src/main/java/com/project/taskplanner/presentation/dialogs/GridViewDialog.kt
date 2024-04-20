@@ -42,7 +42,6 @@ class GridViewDialog(
 
 
         gridView.setOnItemClickListener { parent, view, position, id ->
-//            (mContext as CategoryActivity).setTextViewColor(colorList[position])
             if (position != RecyclerView.NO_POSITION){
                 listener?.onItemClick(view, position)
             }
