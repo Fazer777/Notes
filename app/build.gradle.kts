@@ -85,20 +85,14 @@ dependencies {
     implementation("androidx.navigation:navigation-fragment-ktx:$navVersion")
     implementation("androidx.navigation:navigation-ui-ktx:$navVersion")
 
+
+
     // Koin
     val koinVersion = "3.5.0"
     implementation("io.insert-koin:koin-android:$koinVersion")
     runtimeOnly("io.insert-koin:koin-core:$koinVersion")
 
 
-    // Jupiter
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.1")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.1")
-
-    // Mockito
-    //testImplementation("org.mockito:mockito-core:5.3.1")
-    //testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
-    //testImplementation("org.mockito:mockito-inline:5.2.0")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
