@@ -1,54 +1,57 @@
 package com.project.taskplanner.di
 
-import com.project.data.database.dao.CategoryDaoImpl
-import com.project.data.database.dao.NoteDaoImpl
-import com.project.data.database.dao.SubtaskDaoImpl
-import com.project.data.database.dao.TaskDaoImpl
-import com.project.data.database.dao.dao_interface.ICategoryDao
-import com.project.data.database.dao.dao_interface.INoteDao
-import com.project.data.database.dao.dao_interface.ISubTaskDao
-import com.project.data.database.dao.dao_interface.ITaskDao
+import com.project.data.database.NoteDatabase
+import com.project.data.database.dao.ICategoryDao
+import com.project.data.database.dao.INoteDao
+import com.project.data.database.dao.ITaskDao
 import com.project.data.repository.CategoryRepositoryImpl
 import com.project.data.repository.NoteRepositoryImpl
-import com.project.data.repository.SubtaskRepositoryImpl
 import com.project.data.repository.TaskRepositoryImpl
-import com.project.domain.repository.ICategoryRepository
-import com.project.domain.repository.INoteRepository
-import com.project.domain.repository.ISubtaskRepository
-import com.project.domain.repository.ITaskRepository
+import com.project.domain.repository.category.ICategoryRepository
+import com.project.domain.repository.note.INoteRepository
+import com.project.domain.repository.task.ITaskRepository
+import kotlinx.coroutines.Dispatchers
 import org.koin.dsl.module
 
 val dataModule = module {
 
-    single<ICategoryDao> {
-        CategoryDaoImpl(context = get())
+    single<NoteDatabase> {
+        NoteDatabase.getInstance(get())!!
     }
 
-    single<INoteDao> {
-        NoteDaoImpl(context = get())
+    fun provideNoteDao(db : NoteDatabase) : INoteDao {
+        return db.getNoteDao()
+    }
+
+    fun provideCategoryDao(db : NoteDatabase) : ICategoryDao {
+        return db.getCategoryDao()
+    }
+
+    fun provideTaskDao(db : NoteDatabase) : ITaskDao {
+        return db.getTaskDao()
+    }
+
+    single<INoteDao>{
+        provideNoteDao(db = get())
+    }
+
+    single<ICategoryDao>{
+        provideCategoryDao(db = get())
     }
 
     single<ITaskDao> {
-        TaskDaoImpl(context = get())
-    }
-
-    single<ISubTaskDao> {
-        SubtaskDaoImpl(context = get())
+        provideTaskDao(db = get())
     }
 
     single<ICategoryRepository> {
-        CategoryRepositoryImpl(categoryDao = get())
+        CategoryRepositoryImpl(categoryDao = get(), dispatcher = Dispatchers.IO)
     }
 
-    single<INoteRepository>{
-        NoteRepositoryImpl(noteDao = get())
+    single<INoteRepository> {
+        NoteRepositoryImpl(noteDao = get(), dispatcher = Dispatchers.IO)
     }
 
     single<ITaskRepository> {
-        TaskRepositoryImpl(taskDao = get(), subTaskDao = get())
-    }
-
-    single<ISubtaskRepository> {
-        SubtaskRepositoryImpl(subtaskDao = get())
+        TaskRepositoryImpl(taskDao = get(), dispatcher = Dispatchers.IO)
     }
 }
