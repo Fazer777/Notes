@@ -1,9 +1,9 @@
-package com.project.domain.models
+package com.project.domain.models.category
 
 import java.io.Serializable
 
-data class CategoryInterim (
+data class CategoryParam (
+    val id : Long,
     val name : String,
     val color : Int,
-    var itemIndex : Int
 ) : Serializable

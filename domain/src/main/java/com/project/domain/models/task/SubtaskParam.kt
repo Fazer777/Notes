@@ -1,9 +1,8 @@
-package com.project.domain.models
+package com.project.domain.models.task
 
 import java.io.Serializable
 
-data class SubTaskInterim (
-    var id : Int,
+data class SubtaskParam (
     var title : String,
     var isChecked : Boolean,
     var taskId : Int
