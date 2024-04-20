@@ -1,17 +1,15 @@
 package com.project.taskplanner.presentation.activities.note
 
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.Menu
 import android.view.MenuItem
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import com.project.domain.models.CategoryInterim
-import com.project.domain.models.NoteInterim
+import com.project.domain.models.category.CategoryParam
+import com.project.domain.models.note.NoteParam
 import com.project.taskplanner.R
 import com.project.taskplanner.databinding.UpdateNoteActivityBinding
 import com.project.taskplanner.presentation.adapters.category.CategorySpinnerAdapter
@@ -32,7 +30,7 @@ class UpdateNoteActivity : AppCompatActivity() {
     private lateinit var binding: UpdateNoteActivityBinding
     private val viewModel by viewModel<UpdateNoteVM>()
 
-    private var itemIndex = 0
+    private var noteId : Long =0
    // private var itemPos = 0
 
 
@@ -47,19 +45,16 @@ class UpdateNoteActivity : AppCompatActivity() {
         supportActionBar?.title = "Редактирование"
 
 
-        viewModel.categoriesLive.observe(this@UpdateNoteActivity){
-            categorySpinnerAdapter.categoryList = it
-            categorySpinnerAdapter.notifyDataSetChanged()
+        viewModel.categories.observe(this@UpdateNoteActivity){newlist ->
+            categorySpinnerAdapter.setList(newList = newlist)
         }
 
 
         initEditText()
         initSpinner()
 
-        Thread(
-            Runnable { getIntentData() },
-            "ThreadGetIntentData"
-        ).start()
+        getIntentData()
+
     }
 
     private fun initSpinner() {
@@ -68,39 +63,35 @@ class UpdateNoteActivity : AppCompatActivity() {
         }
     }
 
-    // TODO (IF bundle equals null???) -> to finish act this error message
     private fun getIntentData() {
 
         val data : Bundle? = intent.extras
-        val noteInterim = getSerializable(data, resources.getString(R.string.INTENT_UPDATE_NOTE), NoteInterim::class.java)
-
-        itemIndex = noteInterim.itemIndex
-
-        binding.idUpdNoteEdittext.post {
-            binding.idUpdNoteEdittext.setText(noteInterim.noteDescription)
+        if (data != null){
+            val noteParam = getSerializable(data, resources.getString(R.string.INTENT_UPDATE_NOTE), NoteParam::class.java)
+            noteId = noteParam.id
+            binding.idUpdNoteEdittext.post {
+                binding.idUpdNoteEdittext.setText(noteParam.description)
+            }
+            binding.idUpdNoteTextviewDatetime.post {
+                binding.idUpdNoteTextviewDatetime.text = noteParam.date
+                    .format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT))
+            }
+            binding.idUpdNoteSpinner.post {
+                binding.idUpdNoteSpinner.setSelection(
+                    categorySpinnerAdapter.getItemPositionByName(noteParam.category.name)
+                )
+            }
         }
-        binding.idUpdNoteTextviewDatetime.post {
-            binding.idUpdNoteTextviewDatetime.text = noteInterim.noteDate
-                .format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT))
-        }
-        binding.idUpdNoteSpinner.post {
-            binding.idUpdNoteSpinner.setSelection(
-                categorySpinnerAdapter.getItemPositionByName(noteInterim.category.name)
-            )
-        }
-
     }
 
     private fun updateNote() = with(binding){
-        val noteInterimUpd = NoteInterim(
-            noteDescription = idUpdNoteEdittext.text.toString(),
-            category = idUpdNoteSpinner.selectedItem as CategoryInterim,
-            noteDate = LocalDateTime.now(),
-            itemIndex = itemIndex
+        val noteParam= NoteParam(
+            id = noteId,
+            description = idUpdNoteEdittext.text.toString(),
+            category = idUpdNoteSpinner.selectedItem as CategoryParam,
+            date = LocalDateTime.now(),
         )
-        val intent = Intent()
-        intent.putExtra(resources.getString(R.string.INTENT_UPDATE_NOTE), noteInterimUpd)
-        setResult(RESULT_OK, intent)
+        viewModel.updateNote(noteParam = noteParam)
         finish()
 
     }
@@ -148,6 +139,4 @@ class UpdateNoteActivity : AppCompatActivity() {
         else
             bundle?.getSerializable(key) as T
     }
-
-
 }
