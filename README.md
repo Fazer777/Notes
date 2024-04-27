@@ -1,4 +1,4 @@
-# TaskPlanner
+# Notes
 
 ## Application Icon
  The application icon was taken from the website
