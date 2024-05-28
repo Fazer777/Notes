@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">TaskPlanner</string>
+    <string name="app_name">Notes</string>
 
     <!--Intent Keys-->
     <!--    <string name="INTENT_CREATE_NOTE">create_note</string>-->
